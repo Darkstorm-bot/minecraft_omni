@@ -145,6 +145,10 @@ class ToolRouter:
         self.block_registry = block_registry
         self.tool_schemas = TOOLS
     
+    def route_llm_output(self, llm_response: str) -> List[ToolCall]:
+        """Alias for parse_llm_output - routes LLM response to validated tool calls"""
+        return self.parse_llm_output(llm_response)
+    
     def validate(self, tool_call: Dict[str, Any]) -> ToolCall:
         """
         Validate a tool call against its schema

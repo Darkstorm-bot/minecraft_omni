@@ -120,88 +120,64 @@ class CommandParser:
         Parse a chat command string into BuildIntent
         
         Args:
-            command: Raw chat message (e.g., "!bot build rocket at 100,64,200")
-            player_uuid: Player's UUID for relative positioning
+            command: Raw chat command (e.g., "!bot build rocket at 100,64,200")
+            player_uuid: Optional player UUID for relative positioning
             
         Returns:
-            BuildIntent or None if command not recognized
+            BuildIntent object or None if parsing fails
         """
         command = command.strip()
-        
-        # Check for simple commands without regex
-        if command.lower() in ["!bot approve", "!bot approve"]:
-            return BuildIntent(command_type=CommandType.APPROVE, target="")
-        if command.lower() in ["!bot discard", "!bot discard"]:
-            return BuildIntent(command_type=CommandType.DISCARD, target="")
-        if command.lower() in ["!bot like", "!bot like"]:
-            return BuildIntent(command_type=CommandType.LIKE, target="")
-        if command.lower() in ["!bot dislike", "!bot dislike"]:
-            return BuildIntent(command_type=CommandType.DISLIKE, target="")
         
         # Try each pattern
         for cmd_type, pattern in self.PATTERNS.items():
             match = pattern.match(command)
             if match:
-                groups = match.groupdict()
-                return self._build_intent(cmd_type, groups, player_uuid)
+                return self._build_intent(cmd_type, match.groupdict(), player_uuid)
         
         return None
     
-    def _build_intent(self, cmd_type: CommandType, groups: dict, player_uuid: Optional[str]) -> BuildIntent:
+    def _build_intent(self, cmd_type: CommandType, groups: dict, player_uuid: Optional[str] = None) -> BuildIntent:
         """Construct BuildIntent from regex groups"""
-        intent = BuildIntent(command_type=cmd_type, target=groups.get("target", ""))
+        intent = BuildIntent(command_type=cmd_type, target=groups.get('target', ''))
         
         # Parse coordinates if present
-        coords_str = groups.get("coords")
-        if coords_str:
-            try:
-                x, y, z = map(int, coords_str.split(","))
-                intent.position = Vector3(x, y, z)
-            except ValueError:
-                pass
+        if 'coords' in groups and groups['coords']:
+            coords = list(map(int, groups['coords'].split(',')))
+            if len(coords) == 3:
+                intent.position = Vector3(*coords)
         
         # Handle relative positioning
-        elif player_uuid and player_uuid in self.player_positions:
+        if player_uuid and player_uuid in self.player_positions:
             player_pos = self.player_positions[player_uuid]
-            intent.position = self._resolve_relative(groups.get("target", ""), player_pos)
+            
+            # Check for directional keywords in command
+            for direction, offset in self.DIRECTION_OFFSETS.items():
+                if direction in groups.get('description', '').lower():
+                    intent.position = player_pos + offset
+                    intent.context['relative'] = True
+                    break
         
-        # Parse count for undo
-        if cmd_type == CommandType.UNDO and groups.get("count"):
-            intent.count = int(groups["count"])
-        
-        # Parse style
-        if cmd_type == CommandType.SWITCH_STYLE and groups.get("style"):
-            intent.style = groups["style"].strip()
-        
-        # Parse versions
-        if cmd_type == CommandType.DIFF:
-            intent.version_a = groups.get("version_a")
-            intent.version_b = groups.get("version_b")
-        
-        if cmd_type == CommandType.REVERT:
-            intent.version_a = groups.get("version")
-        
-        if cmd_type == CommandType.COMMIT:
-            intent.context["message"] = groups.get("message", "")
+        # Parse optional fields
+        if 'count' in groups and groups['count']:
+            intent.count = int(groups['count'])
+        if 'style' in groups and groups['style']:
+            intent.style = groups['style'].strip()
+        if 'build_id' in groups and groups['build_id']:
+            intent.build_id = groups['build_id']
+        if 'version_a' in groups and groups['version_a']:
+            intent.version_a = groups['version_a']
+        if 'version_b' in groups and groups['version_b']:
+            intent.version_b = groups['version_b']
+        if 'message' in groups and groups['message']:
+            intent.context['commit_message'] = groups['message']
+        if 'version' in groups and groups['version']:
+            intent.context['revert_version'] = groups['version']
         
         return intent
     
-    def _resolve_relative(self, target: str, player_pos: Vector3) -> Vector3:
-        """
-        Resolve relative positioning keywords
-        Currently supports basic "here" interpretation
-        """
-        target_lower = target.lower()
-        
-        if "in front" in target_lower:
-            # Would need player rotation for accurate direction
-            return player_pos + Vector3(0, 0, -5)
-        elif "behind" in target_lower:
-            return player_pos + Vector3(0, 0, 5)
-        elif "left" in target_lower:
-            return player_pos + Vector3(-5, 0, 0)
-        elif "right" in target_lower:
-            return player_pos + Vector3(5, 0, 0)
-        else:
-            # Default: slight offset in front
-            return player_pos + Vector3(0, 0, -3)
+    def to_dict(self) -> dict:
+        """Convert parser state to dictionary (for serialization)"""
+        return {
+            'player_positions': {k: {'x': v.x, 'y': v.y, 'z': v.z} 
+                                for k, v in self.player_positions.items()}
+        }

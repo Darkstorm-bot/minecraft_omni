@@ -1,128 +1,32 @@
 ```
-# Database files
-locks.sqlite
+# Database
+*:memory:/*/
 
-# Python specific
-__pycache__/
+# Dependencies
+.minecraft_omni/.venv/
+.minecraft_omni/venv/
+.minecraft_omni/__pycache__/
+**/__pycache__/
 *.pyc
 *.pyo
 *.pyd
-*.py~
-
-# Dependencies
-.venv/
-venv/
-env/
-.Python
-pip-log.txt
-pip-delete-this-directory.txt
-.tox/
-
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-.nox/
 
 # Logs
 *.log
 
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
+# Environment
+.env
+.env.local
+*.env.*
 
-# IDE
+# Editors
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# Environment variables
-.env
-.env.local
-*.env.*
-
-# Build and distribution
+# Build artifacts
 build/
 dist/
 *.egg-info/
-*.egg
-
-# Memory and temporary files
-*.tmp
-*~
-```
-
-Wait, let me reconsider. Looking at the file changes more carefully:
-
-- `minecraft_omni/locks.sqlite` - This is a database file that might be generated/modified during runtime
-- `minecraft_omni/memory/version_control.py` - Python source file
-- `minecraft_omni/orchestrator/style_learner.py` - Python source file  
-- `minecraft_omni/tests/comprehensive_validation.py` - Python source file
-
-The locks.sqlite file should likely be ignored since it's a database that may contain runtime data.
-
-```
-# Database files
-locks.sqlite
-
-# Python specific
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-*.py~
-
-# Dependencies
-.venv/
-venv/
-env/
-.Python
-pip-log.txt
-pip-delete-this-directory.txt
-.tox/
-
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-.nox/
-
-# Logs
-*.log
-
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Environment variables
-.env
-.env.local
-*.env.*
-
-# Build and distribution
-build/
-dist/
-*.egg-info/
-*.egg
-
-# Memory and temporary files
-*.tmp
-*~
 ```
