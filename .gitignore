@@ -1,70 +1,128 @@
 ```
-# Compiled and build artifacts
-*.pyc
+# Database files
+locks.sqlite
+
+# Python specific
 __pycache__/
-*.o
-*.obj
-*.so
-*.dll
-*.exe
-*.class
-*.out
+*.pyc
+*.pyo
+*.pyd
+*.py~
 
 # Dependencies
 .venv/
 venv/
 env/
-node_modules/
-dist/
-build/
-target/
-.gradle/
-.mypy_cache/
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+
+# Testing
 .pytest_cache/
 .coverage
-coverage/
 htmlcov/
+.nox/
 
-# Logs and temp files
+# Logs
 *.log
-*.tmp
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
 *.swp
 *.swo
 
-# Environment
+# Environment variables
 .env
 .env.local
-.env.*
+*.env.*
 
-# Editors
-.vscode/
-.idea/
+# Build and distribution
+build/
+dist/
+*.egg-info/
+*.egg
 
-# System files
+# Memory and temporary files
+*.tmp
+*~
+```
+
+Wait, let me reconsider. Looking at the file changes more carefully:
+
+- `minecraft_omni/locks.sqlite` - This is a database file that might be generated/modified during runtime
+- `minecraft_omni/memory/version_control.py` - Python source file
+- `minecraft_omni/orchestrator/style_learner.py` - Python source file  
+- `minecraft_omni/tests/comprehensive_validation.py` - Python source file
+
+The locks.sqlite file should likely be ignored since it's a database that may contain runtime data.
+
+```
+# Database files
+locks.sqlite
+
+# Python specific
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.py~
+
+# Dependencies
+.venv/
+venv/
+env/
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.nox/
+
+# Logs
+*.log
+
+# OS generated files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 
-# Compressed files
-*.zip
-*.gz
-*.tar
-*.tgz
-*.bz2
-*.xz
-*.7z
-*.rar
-*.zst
-*.lz4
-*.lzh
-*.cab
-*.arj
-*.rpm
-*.deb
-*.Z
-*.lz
-*.lzo
-*.tar.gz
-*.tar.bz2
-*.tar.xz
-*.tar.zst
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment variables
+.env
+.env.local
+*.env.*
+
+# Build and distribution
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Memory and temporary files
+*.tmp
+*~
 ```
