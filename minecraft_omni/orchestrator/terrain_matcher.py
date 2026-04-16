@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from typing import List, Dict, Optional, Tuple
 from enum import Enum
 
-from parser.command_parser import Vector3, Bounds
+from minecraft_omni.parser.command_parser import Vector3, Bounds
 
 
 class BiomeType(Enum):
@@ -108,9 +108,13 @@ class TerrainMatcher:
             slope_angle=slope
         )
     
-    def generate_foundation_plan(self, profile: TerrainProfile, bounds: Bounds) -> FoundationPlan:
+    def generate_foundation_plan(self, profile: TerrainProfile, material: str = 'stone') -> FoundationPlan:
         """
         Auto-generate pylings/fill for uneven terrain
+        
+        Args:
+            profile: TerrainProfile from analyze_foundation()
+            material: Block type for foundation (default: 'stone')
         
         Returns:
             FoundationPlan with terraforming instructions
@@ -122,10 +126,22 @@ class TerrainMatcher:
         # Calculate target height based on biome
         base_y = int(profile.avg_height) + self.BIOME_Y_OFFSET.get(profile.biome_type, 0)
         
+        # Derive bounds from elevation_map if not provided as Bounds object
+        if hasattr(profile, 'elevation_map') and profile.elevation_map:
+            coords = list(profile.elevation_map.keys())
+            min_x = min(c[0] for c in coords)
+            max_x = max(c[0] for c in coords)
+            min_z = min(c[1] for c in coords)
+            max_z = max(c[1] for c in coords)
+        else:
+            # Fallback defaults
+            min_x, max_x = -5, 5
+            min_z, max_z = -5, 5
+        
         # Check if terrain is flat enough
         if profile.height_variance < 4:
             # Relatively flat - minor adjustments only
-            adjusted_origin = Vector3(bounds.min_pos.x, base_y, bounds.min_pos.z)
+            adjusted_origin = Vector3(min_x, base_y, min_z)
             return FoundationPlan(
                 fill_regions=[],
                 carve_regions=[],
@@ -134,10 +150,7 @@ class TerrainMatcher:
             )
         
         # Uneven terrain - need pilings or terraforming
-        min_x = bounds.min_pos.x
-        max_x = bounds.max_pos.x
-        min_z = bounds.min_pos.z
-        max_z = bounds.max_pos.z
+        # (min_x, max_x, min_z, max_z already derived from elevation_map above)
         
         # Strategy 1: Corner pilings for elevated structures
         corners = [
@@ -154,14 +167,10 @@ class TerrainMatcher:
             if piling_height > 0:
                 # Need pilings to reach target height
                 for py in range(ground_height, base_y):
-                    piling_positions.append((cx, py, cz, "stone_bricks"))
+                    piling_positions.append((cx, py, cz, material))
             elif piling_height < 0:
                 # Need to carve down
-                carve_bounds = Bounds(
-                    Vector3(cx, base_y, cz),
-                    Vector3(cx, ground_height, cz)
-                )
-                carve_regions.append((carve_bounds, "air"))
+                carve_regions.append(((cx, base_y, cz), (cx, ground_height, cz), "air"))
         
         # Strategy 2: Fill low spots under structure footprint
         for x in range(min_x, max_x + 1, 3):  # Grid pattern every 3 blocks
@@ -169,13 +178,9 @@ class TerrainMatcher:
                 ground_height = profile.get_height_at(x, z)
                 if ground_height < base_y - 1:
                     # Fill gap with supporting blocks
-                    fill_bounds = Bounds(
-                        Vector3(x, ground_height + 1, z),
-                        Vector3(x, base_y - 1, z)
-                    )
-                    fill_regions.append((fill_bounds, "cobblestone"))
+                    fill_regions.append(((x, ground_height + 1, z), (x, base_y - 1, z), material))
         
-        adjusted_origin = Vector3(bounds.min_pos.x, base_y, bounds.min_pos.z)
+        adjusted_origin = Vector3(min_x, base_y, min_z)
         
         return FoundationPlan(
             fill_regions=fill_regions,

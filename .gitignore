@@ -1,32 +1,63 @@
 ```
-# Database
-*:memory:/*/
+# Database files
+*.db
 
-# Dependencies
-.minecraft_omni/.venv/
-.minecraft_omni/venv/
-.minecraft_omni/__pycache__/
-**/__pycache__/
+# Python
+__pycache__/
 *.pyc
 *.pyo
 *.pyd
+.Python
+env/
+venv/
+.venv/
+.ENV
+.python-version
+
+# Build and distribution artifacts
+build/
+dist/
+*.egg-info/
 
 # Logs
 *.log
 
-# Environment
+# Environment variables
 .env
 .env.local
 *.env.*
 
-# Editors
+# Coverage reports
+.coverage
+htmlcov/
+.coverage.*
+
+# Testing
+.pytest_cache/
+.mypy_cache/
+
+# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
+*~
 
-# Build artifacts
-build/
-dist/
-*.egg-info/
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Compressed files
+*.zip
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.gz
+*.rar
+*.7z
 ```

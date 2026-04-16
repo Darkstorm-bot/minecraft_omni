@@ -69,37 +69,43 @@ class CommandParser:
     Supports relative positioning (in front of me, here, at x,y,z)
     """
     
-    # Regex patterns for command extraction
-    PATTERNS = {
-        CommandType.BUILD: re.compile(
-            r'!bot\s+build\s+(?:me\s+)?(?P<target>[a-zA-Z]\w*)(?:\s+(?:me\s+)?(?:a|an|the)?\s*(?P<description>[\w\s]+?))?(?:\s+(?:at|here|in front of me|behind me|left of me|right of me))?(?:\s+(?P<coords>\d+,\d+,\d+))?',
+    # Regex patterns for command extraction (OrderedDict to preserve order)
+    PATTERNS = [
+        # Specific patterns first
+        (CommandType.BUILD, re.compile(
+            r'!bot\s+build\s+(?:(?:me\s+)?(?:a|an|the)\s+)?(?P<target>[a-zA-Z]\w*)(?:\s+(?P<description>[\w\s]+?))?(?:\s+(?P<coords>\d+,\d+,\d+))?',
             re.IGNORECASE
-        ),
-        CommandType.PREVIEW: re.compile(
-            r'!bot\s+preview\s+(?:(?:a|an|the)\s+)?(?P<target>[a-zA-Z]\w*)(?:\s+(?:at|here))?(?:\s+(?P<coords>\d+,\d+,\d+))?',
+        )),
+        (CommandType.PREVIEW, re.compile(
+            r'!bot\s+preview\s+(?:(?:a|an|the)\s+)?(?P<target>[a-zA-Z]\w*)(?:\s+(?P<coords>\d+,\d+,\d+))?',
             re.IGNORECASE
-        ),
-        CommandType.UNDO: re.compile(
+        )),
+        (CommandType.UNDO, re.compile(
             r'!bot\s+undo(?:\s+last\s+(?P<count>\d+))?',
             re.IGNORECASE
-        ),
-        CommandType.SWITCH_STYLE: re.compile(
+        )),
+        (CommandType.SWITCH_STYLE, re.compile(
             r'!bot\s+switch\s+to\s+(?P<style>[\w\s]+?)\s+style',
             re.IGNORECASE
-        ),
-        CommandType.COMMIT: re.compile(
+        )),
+        (CommandType.COMMIT, re.compile(
             r'!bot\s+commit\s+(?P<message>[\w\s]+)',
             re.IGNORECASE
-        ),
-        CommandType.REVERT: re.compile(
+        )),
+        (CommandType.REVERT, re.compile(
             r'!bot\s+revert\s+(?P<version>[\w\-]+)',
             re.IGNORECASE
-        ),
-        CommandType.DIFF: re.compile(
+        )),
+        (CommandType.DIFF, re.compile(
             r'!bot\s+diff\s+(?P<version_a>[\w\-]+)\s+(?P<version_b>[\w\-]+)',
             re.IGNORECASE
-        ),
-    }
+        )),
+        # Relative positioning pattern (checked last as fallback for build)
+        (CommandType.BUILD, re.compile(
+            r'!bot\s+build\s+(?P<description>(?:\d+\s+blocks\s+)?(?:north|south|east|west|in front|behind|left|right))',
+            re.IGNORECASE
+        )),
+    ]
     
     DIRECTION_OFFSETS = {
         "north": Vector3(0, 0, -1),
@@ -128,8 +134,8 @@ class CommandParser:
         """
         command = command.strip()
         
-        # Try each pattern
-        for cmd_type, pattern in self.PATTERNS.items():
+        # Try each pattern (PATTERNS is now a list of tuples)
+        for cmd_type, pattern in self.PATTERNS:
             match = pattern.match(command)
             if match:
                 return self._build_intent(cmd_type, match.groupdict(), player_uuid)

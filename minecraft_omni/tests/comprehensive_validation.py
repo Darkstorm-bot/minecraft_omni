@@ -10,8 +10,20 @@ import unittest
 from typing import List, Dict, Tuple
 from datetime import datetime
 
-# Add project root to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+# Add project root to path (use absolute path for installed package)
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, PROJECT_ROOT)
+
+# Try importing from installed package first
+try:
+    import minecraft_omni
+except ImportError:
+    sys.path.insert(0, os.path.join(PROJECT_ROOT, '..'))
+    try:
+        import minecraft_omni
+    except ImportError:
+        print("ERROR: Could not import minecraft_omni. Make sure it's installed with 'pip install -e .'")
+        sys.exit(1)
 
 class TestResults:
     """Track test results across all modules"""

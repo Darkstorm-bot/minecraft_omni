@@ -8,7 +8,7 @@ from typing import List, Dict, Optional, Any, Tuple
 import asyncio
 import time
 
-from parser.command_parser import Vector3, Bounds
+from minecraft_omni.parser.command_parser import Vector3, Bounds
 from llm.tool_router import ToolCall
 from executor.block_state_registry import BlockData, BlockStateRegistry
 
