@@ -1,0 +1,67 @@
+# Minecraft Omni-Builder Configuration
+# Edit this file to connect your bot to Minecraft, Local LLM, and MemPalace.
+
+# ------------------------------------------------------------------
+# 1. MEMPALACE CONNECTION (Memory & Sync Backend)
+# ------------------------------------------------------------------
+mempalace:
+  # Your MemPalace API Key or Server URL
+  # For cloud: "https://api.mempalace.io"
+  # For self-hosted: "http://localhost:8000"
+  url: "https://api.mempalace.io"
+  
+  # Your API Key (Get from https://mempalace.io/dashboard)
+  api_key: "YOUR_MEMPALACE_API_KEY_HERE"
+  
+  # Project ID (Unique ID for this specific bot/world)
+  project_id: "minecraft_omni_main"
+
+# ------------------------------------------------------------------
+# 2. LOCAL LLM CONFIGURATION (The Brain)
+# ------------------------------------------------------------------
+llm:
+  # Provider: 'ollama', 'lm_studio', 'openai', 'anthropic'
+  provider: "ollama"
+  
+  # Model Name (e.g., 'llama3', 'mistral', 'gpt-4o')
+  model: "llama3"
+  
+  # API Endpoint (Leave default for Ollama/LM Studio)
+  base_url: "http://localhost:11434/v1"
+  
+  # API Key (Usually not needed for local, required for OpenAI)
+  api_key: ""
+
+# ------------------------------------------------------------------
+# 3. MINECRAFT CONNECTION (The Hands)
+# ------------------------------------------------------------------
+minecraft:
+  # Connection Method: 'rcon', 'mod', 'mineflayer'
+  method: "rcon"
+  
+  # Server IP / Host
+  host: "localhost"
+  
+  # RCON Port (Default: 25575)
+  port: 25575
+  
+  # RCON Password (Set in server.properties)
+  password: "your_rcon_password"
+  
+  # World Spawn Offset (If your build coordinates differ from world 0,0)
+  spawn_offset_x: 0
+  spawn_offset_y: 64
+  spawn_offset_z: 0
+
+# ------------------------------------------------------------------
+# 4. SYSTEM SETTINGS
+# ------------------------------------------------------------------
+system:
+  # Log Level: DEBUG, INFO, WARNING, ERROR
+  log_level: "INFO"
+  
+  # Enable Holographic Preview (Requires Mod support)
+  enable_preview: true
+  
+  # Auto-approve builds under X blocks (0 = always ask)
+  auto_approve_threshold: 10

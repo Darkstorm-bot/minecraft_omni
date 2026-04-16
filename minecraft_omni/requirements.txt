@@ -1,30 +1,26 @@
 # Minecraft Omni-Builder v3.1 Dependencies
-
-# Web Framework
-fastapi>=0.104.0
-uvicorn[standard]>=0.24.0
+# Core
+requests>=2.31.0
+pyyaml>=6.0
+aiohttp>=3.9.0
 websockets>=12.0
 
-# Data Validation
-pydantic>=2.0.0
+# LLM & AI
+openai>=1.12.0
+anthropic>=0.18.0
 
-# Database & Memory
-mempalace>=1.0.0
-alembic>=1.12.0
-sqlite3
-
-# ML & Vector Search
-chromadb>=0.4.0
+# Data & Validation
+pydantic>=2.5.0
 numpy>=1.24.0
 
-# Monitoring
-prometheus-client>=0.19.0
+# Database & Sync
+asyncpg>=0.29.0
+aiosqlite>=0.19.0
 
-# CRDT Support (v3.1)
-y-py>=0.6.0
-
-# HTTP Client
-requests>=2.31.0
+# Utilities
+python-dotenv>=1.0.0
+rich>=13.7.0
+colorama>=0.4.6
 
 # Testing
 pytest>=7.4.0

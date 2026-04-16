@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from typing import List, Dict, Optional, Set, Tuple
 from enum import Enum
 
-from minecraft_omni.parser.command_parser import Vector3, Bounds
+from parser.command_parser import Vector3, Bounds
 
 
 class PhysicsErrorType(Enum):
