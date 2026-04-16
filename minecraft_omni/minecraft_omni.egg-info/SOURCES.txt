@@ -1,0 +1,7 @@
+README.md
+pyproject.toml
+minecraft_omni.egg-info/PKG-INFO
+minecraft_omni.egg-info/SOURCES.txt
+minecraft_omni.egg-info/dependency_links.txt
+minecraft_omni.egg-info/requires.txt
+minecraft_omni.egg-info/top_level.txt
